@@ -794,28 +794,17 @@ async function finish(){try{
 store();
 const c=cfg(),subject=R(c.subject||'Valoración - {cliente}'),body=R(c.body||'');
 const pages=renderPDFPages();
-let files=[];
-if(window.jspdf&&window.jspdf.jsPDF){
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF({orientation:'portrait',unit:'px',format:[1240,1755],hotfixes:['px_scaling']});
-  pdf.addImage(pages[0].toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);
-  pdf.addPage([1240,1755],'portrait');
-  pdf.addImage(pages[1].toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);
-  files=[new File([pdf.output('blob')],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`,{type:'application/pdf'})];
-}else{
-  const toBlob=c=>new Promise(r=>c.toBlob(r,'image/jpeg',0.92));
-  files=[
-    new File([await toBlob(pages[0])],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}_1.jpg`,{type:'image/jpeg'}),
-    new File([await toBlob(pages[1])],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}_2.jpg`,{type:'image/jpeg'})
-  ];
-}
-if(navigator.canShare?.({files})){
-  await navigator.share({files,title:subject,text:body});
-  localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
-  setTimeout(()=>location.reload(),250);
-}else{
-  throw new Error('Este dispositivo no permite compartir el archivo');
-}
+const PDF=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+if(!PDF)throw new Error('No se puede crear el PDF único');
+const pdf=new PDF({orientation:'portrait',unit:'px',format:[1240,1755],hotfixes:['px_scaling']});
+pdf.addImage(pages[0].toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);
+pdf.addPage([1240,1755],'portrait');
+pdf.addImage(pages[1].toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);
+const file=new File([pdf.output('blob')],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`,{type:'application/pdf'});
+if(!navigator.canShare?.({files:[file]}))throw new Error('El dispositivo no permite compartir el PDF');
+await navigator.share({files:[file],title:subject,text:body});
+localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
+setTimeout(()=>location.reload(),250);
 }catch(e){if(e?.name==='AbortError')showSharePointMessage('Compartir cancelado');else showSharePointMessage('Error al finalizar: '+(e.message||e))}}
 if(E('finishV13'))E('finishV13').onclick=finish;
 if(E('historyTopV1'))E('historyTopV1').onclick=()=>{drawH();E('historyModalV1').style.display='block'};
@@ -824,5 +813,5 @@ if(E('settingsTopV1'))E('settingsTopV1').onclick=()=>{E('homeV13').style.display
 if(E('homeV13'))E('homeV13').style.display='none';
 })();
 </script>
-<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:52 · SHARE FIX</div>
+<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:34 · PDF ÚNICO</div>
 </body></html>
