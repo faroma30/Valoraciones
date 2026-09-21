@@ -771,7 +771,7 @@ async function finishOutlook(){
      try{await navigator.share({files:[f],title:subject})}catch(e){}
    } else p.save(filename);
    const u='https://outlook.office.com/mail/deeplink/compose?to='+encodeURIComponent(c.to)+'&cc='+encodeURIComponent(c.cc)+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
-   window.location.href=u;
+   sessionStorage.setItem('valoracion_enviada_v1','1');window.location.href=u;
  }catch(e){showSharePointMessage(e.message)}
 }
 fill();E('saveMailV14').onclick=saveCfg;
@@ -790,7 +790,21 @@ function cfg(){try{return {to:'soporteinstalaciones@verisure.es',cc:'angel.garci
 function mat(){const c={};state.zones.forEach(z=>(z.elements||[]).forEach(k=>c[k]=(c[k]||0)+1));return Object.entries(c).map(([k,n])=>`${n} x ${(devices.find(x=>x[0]===k)||[k,k])[1]}`).join('\n')||'Sin material indicado'}
 function R(t){const v={cliente:state.clienteNombre||'',direccion:[state.direccion,state.numero,state.portal&&('Portal '+state.portal),state.escalera&&('Esc. '+state.escalera),state.piso&&('Piso '+state.piso),state.letra].filter(Boolean).join(' '),material:mat()};return String(t||'').replace(/\{(cliente|direccion|material)\}/g,(_,k)=>v[k])}
 function store(){save();let h=H();h.unshift({id:Date.now(),date:new Date().toISOString(),state:JSON.parse(JSON.stringify(state)),st:localStorage.getItem('sigTec'),sc:localStorage.getItem('sigCli')});localStorage.setItem(HK,JSON.stringify(h.slice(0,20)))}
-async function finish(){try{if(!(window.jspdf&&window.jspdf.jsPDF))throw new Error('jsPDF inline no está disponible');store();const p=await makePdf(),fn=`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`;p.save(fn);const c=cfg(),u='https://outlook.office.com/mail/deeplink/compose?to='+encodeURIComponent(c.to||'soporteinstalaciones@verisure.es')+'&cc='+encodeURIComponent(c.cc||'angel.garcia@verisure.es')+'&subject='+encodeURIComponent(R(c.subject||'Valoración - {cliente}'))+'&body='+encodeURIComponent(R(c.body||''));localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');const w=window.open(u,'_blank');if(!w)location.href=u;setTimeout(()=>location.reload(),500)}catch(e){showSharePointMessage('Error al finalizar: '+(e.message||e))}}
+async function finish(){try{
+store();
+const c=cfg(),subject=R(c.subject||'Valoración - {cliente}'),body=R(c.body||'');
+const p=await makePdf(),blob=p.output('blob');
+const file=new File([blob],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`,{type:'application/pdf'});
+if(navigator.canShare?.({files:[file]})){
+  sessionStorage.setItem('valoracion_enviada_v1','1');
+  await navigator.share({files:[file],title:subject,text:body});
+  localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
+  setTimeout(()=>location.reload(),250);
+}else{
+  p.save(file.name);
+  showSharePointMessage('PDF generado. Selecciona Outlook para adjuntarlo.');
+}
+}catch(e){if(e?.name==='AbortError')showSharePointMessage('Compartir cancelado');else showSharePointMessage('Error al finalizar: '+(e.message||e))}}
 if(E('finishV13'))E('finishV13').onclick=finish;
 if(E('historyTopV1'))E('historyTopV1').onclick=()=>{drawH();E('historyModalV1').style.display='block'};
 E('closeHistoryV1').onclick=()=>E('historyModalV1').style.display='none';
@@ -798,5 +812,15 @@ if(E('settingsTopV1'))E('settingsTopV1').onclick=()=>{E('homeV13').style.display
 if(E('homeV13'))E('homeV13').style.display='none';
 })();
 </script>
-<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:26 · INLINE PDF</div>
+<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:44 · ADJUNTO NATIVO</div>
+
+<script>
+window.addEventListener('pageshow',e=>{
+ if(sessionStorage.getItem('valoracion_enviada_v1')==='1'){
+   sessionStorage.removeItem('valoracion_enviada_v1');
+   localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
+   if(typeof showStep==='function')showStep(0);
+ }
+});
+</script>
 </body></html>
