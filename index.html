@@ -840,7 +840,7 @@ if(E('settingsTopV1'))E('settingsTopV1').onclick=()=>{E('homeV13').style.display
 if(E('homeV13'))E('homeV13').style.display='none';
 })();
 </script>
-<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 16:02 · GENERAR PDF FIX</div>
+<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 16:08 · MAILTO</div>
 
 <script>
 (()=>{
@@ -884,12 +884,18 @@ function saveHistoryV1(){save();let h=[];try{h=JSON.parse(localStorage.getItem(H
 E('downloadPdfV1').onclick=()=>{try{save();const blob=nativePdfBlobV1();downloadBlobV1(blob,`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`);showSharePointMessage('PDF generado')}catch(e){showSharePointMessage('Error al generar PDF: '+(e.message||e))}};
 E('finishV13').onclick=()=>{try{
  saveHistoryV1();
- const c=mailCfgV1(),subject=renderMailV1(c.subject||'Valoración - {cliente}'),body=renderMailV1(c.body||'');
- const u='https://outlook.office.com/mail/deeplink/compose?to='+encodeURIComponent(c.to||'soporteinstalaciones@verisure.es')+'&cc='+encodeURIComponent(c.cc||'angel.garcia@verisure.es')+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
- localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
+ const c=mailCfgV1();
+ const subject=renderMailV1(c.subject||'Valoración - {cliente}');
+ const body=renderMailV1(c.body||'');
+ const to=c.to||'soporteinstalaciones@verisure.es';
+ const cc=c.cc||'angel.garcia@verisure.es';
+ const mailto='mailto:'+encodeURIComponent(to)+'?cc='+encodeURIComponent(cc)+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+ localStorage.removeItem('valoracion_simple');
+ localStorage.removeItem('sigTec');
+ localStorage.removeItem('sigCli');
  sessionStorage.setItem('valoracion_enviada_v1','1');
- window.location.href=u;
-}catch(e){showSharePointMessage('Error al abrir Outlook: '+(e.message||e))}};
+ window.location.href=mailto;
+}catch(e){showSharePointMessage('Error al preparar correo: '+(e.message||e))}};
 })();
 </script>
 </body></html>
