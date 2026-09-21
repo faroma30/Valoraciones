@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Valoración de instalación - Asistente móvil</title>
-<script src="./jspdf.bundle.js?rev=20260921-1507"></script>
+<script src="./jspdf.bundle.js?rev=20260921-1518"></script>
 <style>
 :root{--red:#e30613;--blue:#0047ff;--bg:#f4f6f8;--card:#fff;--line:#d7dce1}
 *{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#222}
@@ -248,7 +248,7 @@ function renderPDFPages(){
  return[c1,c2]
 }
 function safeFilePart(value){return String(value||'').trim().replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,'_')}
-async function makePdf(){if(!window.jspdf)throw new Error('No se ha cargado el generador PDF');const {jsPDF}=window.jspdf;const [a,b]=renderPDFPages();const pdf=new jsPDF({orientation:'portrait',unit:'px',format:[1240,1755],hotfixes:['px_scaling']});pdf.addImage(a.toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);pdf.addPage([1240,1755],'portrait');pdf.addImage(b.toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);return pdf}
+async function makePdf(){const jsPDF=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;if(!jsPDF)throw new Error('No se ha cargado el generador PDF');const [a,b]=renderPDFPages();const pdf=new jsPDF({orientation:'portrait',unit:'px',format:[1240,1755],hotfixes:['px_scaling']});pdf.addImage(a.toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);pdf.addPage([1240,1755],'portrait');pdf.addImage(b.toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);return pdf}
 ({onclick:null}).onclick=async()=>{try{const p=await makePdf();p.save(`VALORACION_${safeFilePart(state.mantenimiento)||'SIN_NUMERO'}.pdf`)}catch(e){showSharePointMessage(e.message)}};
 ({onclick:null}).onclick=async()=>{try{const p=await makePdf();const blob=p.output('blob');const f=new File([blob],`VALORACION_${safeFilePart(state.mantenimiento)||'SIN_NUMERO'}.pdf`,{type:'application/pdf'});if(navigator.canShare?.({files:[f]}))await navigator.share({files:[f],title:'Valoración de instalación'});else{p.save(f.name);showSharePointMessage('Tu dispositivo no permite compartir archivos directamente. Se ha descargado el PDF.')}}catch(e){showSharePointMessage(e.message)}};
 ({onclick:null}).onclick=()=>{if(confirm('¿Crear una valoración nueva?')){safeStorage.clear();location.reload()}};
@@ -309,7 +309,7 @@ function applyProfile(){const p=profile();if(!E('tecnicoNombre').value)E('tecnic
 function archive(){save();let h=hist(),it={id:Date.now(),date:new Date().toISOString(),state:JSON.parse(JSON.stringify(state)),st:localStorage.getItem('sigTec'),sc:localStorage.getItem('sigCli')};h=h.filter(x=>!(state.mantenimiento&&x.state?.mantenimiento===state.mantenimiento));h.unshift(it);setHist(h);renderHist()}
 function renderHist(){let b=E('histV13'),h=hist();b.innerHTML=h.length?'':'<small>No hay valoraciones guardadas.</small>';h.forEach(x=>{let d=document.createElement('div');d.style='padding:10px 0;border-top:1px solid #eee;display:flex;justify-content:space-between;gap:8px';d.innerHTML=`<div><b>${x.state?.clienteNombre||'Sin nombre'}</b><br><small>${x.state?.mantenimiento||'Sin mantenimiento'} · ${new Date(x.date).toLocaleString('es-ES')}</small></div><div><button class="secondary">Abrir</button> <button class="danger">×</button></div>`;d.querySelector('.secondary').onclick=()=>{localStorage.setItem('valoracion_simple',JSON.stringify(x.state));if(x.st)localStorage.setItem('sigTec',x.st);if(x.sc)localStorage.setItem('sigCli',x.sc);location.reload()};d.querySelector('.danger').onclick=()=>{if(confirm('¿Eliminar del historial?')){setHist(hist().filter(y=>y.id!==x.id));renderHist()}};b.appendChild(d)})}
 function material(){let c={};state.zones.forEach(z=>(z.elements||[]).forEach(k=>c[k]=(c[k]||0)+1));let b=E('materialV13');if(!b)return;b.innerHTML='';Object.entries(c).forEach(([k,n])=>{let name=(devices.find(x=>x[0]===k)||[k,k])[1],d=document.createElement('div');d.style='border:1px solid #ddd;border-radius:8px;padding:10px';d.innerHTML=`<b>${n} × ${name}</b><br><small>${k}</small>`;b.appendChild(d)});if(!Object.keys(c).length)b.innerHTML='<small>No hay dispositivos asignados a zonas.</small>'}
-async function preview(){save();material();let pages=renderPDFPages(),b=E('previewPagesV13');b.innerHTML='';pages.forEach(c=>{let i=new Image();i.src=c.toDataURL('image/jpeg',.82);i.style='width:100%;display:block;margin:8px 0';b.appendChild(i)});E('previewModalV13').style.display='block'}
+async function preview(){await window.ensurePdfV1();save();material();let pages=renderPDFPages(),b=E('previewPagesV13');b.innerHTML='';pages.forEach(c=>{let i=new Image();i.src=c.toDataURL('image/jpeg',.82);i.style='width:100%;display:block;margin:8px 0';b.appendChild(i)});E('previewModalV13').style.display='block'}
 async function finish(){try{archive();let p=await makePdf(),blob=p.output('blob'),f=new File([blob],`VALORACION_${safeFilePart(state.mantenimiento)||'SIN_NUMERO'}.pdf`,{type:'application/pdf'});if(navigator.canShare?.({files:[f]}))await navigator.share({files:[f],title:'Valoración de instalación'});else p.save(f.name)}catch(e){showSharePointMessage(e.message)}}
 function nearest(p){let best=null,dist=45;state.plan.forEach(o=>{if(o.type==='device'){let d=Math.hypot(o.x-p.x,o.y-p.y);if(d<dist){dist=d;best=o}}});return best}
 const oldDown=down;down=function(e){if(tool==='select'){e.preventDefault();let o=nearest(planPos(e));if(o){sel.has(o)?sel.delete(o):sel.add(o);redrawPlan()}return}oldDown(e)}
@@ -407,19 +407,19 @@ async function finalOutlookV1(){
 const f=E('finishV13'); if(f)f.onclick=finalOutlookV1;
 })();
 </script>
-<div id="updateStampV1" style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px/1.2 Arial,sans-serif;color:#777;background:rgba(255,255,255,.82);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:07</div></body></html>
+<div id="updateStampV1" style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px/1.2 Arial,sans-serif;color:#777;background:rgba(255,255,255,.82);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:18 · PDF FIX 3</div></body></html>
+
 <script>
 window.ensurePdfV1=async function(){
- if(window.jspdf?.jsPDF)return true;
- await new Promise((resolve,reject)=>{
-   const old=document.getElementById('jspdfFallbackV1'); if(old)old.remove();
-   const sc=document.createElement('script'); sc.id='jspdfFallbackV1';
-   sc.src='./jspdf.bundle.js?rev=20260921-1507&fallback=1';
-   sc.onload=resolve; sc.onerror=()=>reject(new Error('No se pudo cargar jspdf.bundle.js'));
-   document.head.appendChild(sc);
+ const ok=()=>!!(window.jspdf&&window.jspdf.jsPDF)||!!window.jsPDF;
+ if(ok())return true;
+ const load=src=>new Promise((resolve,reject)=>{
+   const sc=document.createElement('script');sc.src=src;sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc);
  });
- if(!window.jspdf?.jsPDF)throw new Error('No se ha cargado el generador PDF');
+ await load('./jspdf.bundle.js?rev=20260921-1518');
+ if(!ok())throw new Error('El generador PDF no está disponible');
  return true;
 };
 </script>
+
 
