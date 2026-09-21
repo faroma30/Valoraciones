@@ -433,16 +433,15 @@ label{font-size:12px;font-weight:700;display:block;margin-bottom:4px}input,selec
 </head>
 <body><div id="homeV13" style="position:fixed;inset:0;z-index:99998;background:#f5f6f8;overflow:auto;padding:12px">
 <div style="max-width:760px;margin:auto;background:#fff;border:1px solid #ddd;border-radius:14px;padding:18px">
-<h1>Valoraciones</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="primary" id="newV13">+ Nueva valoración</button><button class="secondary" id="continueV13">Continuar borrador</button></div>
+<h1 style="margin-top:0">Valoraciones</h1><p>Asistente de valoración de instalaciones</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="primary" id="newV13">+ Nueva valoración</button><button class="secondary" id="continueV13">Continuar borrador</button><button class="secondary" id="settingsV1">⚙ Ajustes</button></div>
+<h2 style="margin-top:24px">Valoraciones recientes</h2><div id="histV13"></div></div></div>
+<div id="settingsModalV1" style="display:none;position:fixed;inset:0;z-index:100000;background:#f5f6f8;overflow:auto;padding:12px">
+<div style="max-width:760px;margin:auto;background:#fff;border:1px solid #ddd;border-radius:14px;padding:18px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h1 style="margin:0">Ajustes</h1><button class="secondary" id="closeSettingsV1">Cerrar</button></div>
 <h2>Datos del técnico</h2><label>Nombre</label><input id="profNameV13"><label>DNI</label><input id="profDniV13" maxlength="9"><label>Matrícula</label><input id="profMatV13"><button class="secondary" id="saveProfV13" style="margin-top:8px">Guardar datos</button>
-<h2>Correo de finalización</h2>
-<label>Para</label><input id="mailToV14" type="email">
-<label>CC</label><input id="mailCcV14" type="email">
-<label>Asunto</label><input id="mailSubjectV14">
-<label>Cuerpo del mensaje</label><textarea id="mailBodyV14" rows="7" style="width:100%;box-sizing:border-box"></textarea>
-<small>Puedes usar {cliente}, {direccion} y {material}.</small>
-<button class="secondary" id="saveMailV14" style="margin-top:8px">Guardar correo</button>
-<h2>Valoraciones recientes</h2><div id="histV13"></div></div></div>
+<h2>Correo de finalización</h2><label>Para</label><input id="mailToV14" type="email"><label>CC</label><input id="mailCcV14" type="email"><label>Asunto</label><input id="mailSubjectV14"><label>Cuerpo del mensaje</label><textarea id="mailBodyV14" rows="7" style="width:100%;box-sizing:border-box"></textarea><small>Puedes usar {cliente}, {direccion} y {material}.</small><button class="secondary" id="saveMailV14" style="margin-top:8px">Guardar correo</button>
+</div></div>
 <div id="previewModalV13" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);overflow:auto;padding:10px">
 <div style="max-width:900px;margin:auto;background:#fff;border-radius:12px;padding:10px"><div style="position:sticky;top:0;background:#fff;padding:8px;z-index:2"><button class="secondary" id="closePreviewV13">Cerrar vista previa</button></div><div id="previewPagesV13"></div></div></div>
 <header><h1><span class="brand">verisure</span> · Valoración de instalación</h1><span id="saveState">Guardado</span></header><div class="wizardProgress"><div class="progressTrack"><div class="progressFill" id="progressFill"></div></div><div class="progressText" id="progressText">Paso 1 de 6 · Datos del cliente</div></div>
@@ -735,8 +734,12 @@ pc.addEventListener('pointermove',e=>{if(pointers.has(e.pointerId)){pointers.set
 ['pointerup','pointercancel'].forEach(t=>pc.addEventListener(t,e=>pointers.delete(e.pointerId)));
 E('previewV13').onclick=preview;E('closePreviewV13').onclick=()=>E('previewModalV13').style.display='none';E('finishV13').onclick=finish;
 E('continueV13').onclick=()=>E('homeV13').style.display='none';
+E('settingsV1').onclick=()=>E('settingsModalV1').style.display='block';
+E('closeSettingsV1').onclick=()=>E('settingsModalV1').style.display='none';
+
 E('newV13').onclick=()=>{if(localStorage.getItem('valoracion_simple')&&confirm('¿Guardar el borrador actual en el historial?'))archive();localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');location.reload()};
 E('saveProfV13').onclick=()=>{localStorage.setItem(PK,JSON.stringify({n:E('profNameV13').value.trim(),d:E('profDniV13').value.trim(),m:E('profMatV13').value.trim()}));applyProfile();save()};
+E('continueV13').style.display=localStorage.getItem('valoracion_simple')?'':'none';
 const p=profile();E('profNameV13').value=p.n||'';E('profDniV13').value=p.d||'';E('profMatV13').value=p.m||'';applyProfile();renderHist();
 const oldShow=showStep;showStep=function(n){oldShow(n);if(n===5)material()}
 })();
