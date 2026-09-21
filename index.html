@@ -468,6 +468,7 @@ label{font-size:12px;font-weight:700;display:block;margin-bottom:4px}input,selec
 <div class="step" data-step="4"><section class="card"><h2>Firmas</h2><div class="grid"><div><label>Nombre técnico</label><input id="tecnicoNombre"><label style="margin-top:8px">DNI técnico</label><input id="tecnicoDni" maxlength="9"><label style="margin-top:8px">Matrícula</label><input id="matricula"></div><div><label>Nombre cliente firmante</label><input id="firmante"><label style="margin-top:8px">DNI cliente</label><input id="clienteDni" maxlength="9"></div></div><div class="signatureGrid"><div><label>Firma técnico</label><canvas class="sig" id="sigTec" width="500" height="160"></canvas><button class="secondary" data-clear="sigTec">Borrar firma</button></div><div><label>Firma cliente</label><canvas class="sig" id="sigCli" width="500" height="160"></canvas><button class="secondary" data-clear="sigCli">Borrar firma</button></div></div></section><div class="stepNav"><button class="secondary prevStep" data-prev="3">Atrás</button><button class="primary" id="goFinal" disabled>Continuar</button></div></div>
 <div class="step" data-step="5"><div class="card finalReady"><h2>Valoración lista</h2><p>Revisa el material y el PDF antes de finalizar.</p>
 <div id="materialV13" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin:16px 0"></div><div class="actions" style="position:static;justify-content:center"><button class="primary" id="previewV13">Vista previa</button>
+<button class="primary" id="downloadPdfV1">Generar PDF</button>
 <button class="primary" id="finishV13">Finalizar y compartir</button>
 <button class="secondary" id="pdfBtn" style="display:none">Generar PDF</button><button class="secondary" id="shareBtn" style="display:none">Compartir PDF</button><button class="secondary" id="newBtn" style="display:none">Nueva valoración</button></div></div><div class="stepNav"><button class="secondary prevStep" data-prev="4">Atrás</button><span></span></div></div>
 </div>
@@ -839,5 +840,26 @@ if(E('settingsTopV1'))E('settingsTopV1').onclick=()=>{E('homeV13').style.display
 if(E('homeV13'))E('homeV13').style.display='none';
 })();
 </script>
-<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:40 · PDF NATIVO</div>
+<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:48 · 3 BOTONES</div>
+
+<script>
+(()=>{
+const E=id=>document.getElementById(id), MK='correo_final_v14', HK='historial_v13';
+function mailCfgV1(){try{return {to:'soporteinstalaciones@verisure.es',cc:'angel.garcia@verisure.es',subject:'Valoración - {cliente}',body:'Buenos días,\n\nAdjunto la valoración correspondiente al prospecto {cliente}.\n\nPropuesta realizada al cliente:\n{material}\n\nDirección: {direccion}\n\nUn saludo.',...JSON.parse(localStorage.getItem(MK)||'{}')}}catch(e){return {}}}
+function materialV1(){const c={};state.zones.forEach(z=>(z.elements||[]).forEach(k=>c[k]=(c[k]||0)+1));return Object.entries(c).map(([k,n])=>`${n} x ${(devices.find(x=>x[0]===k)||[k,k])[1]}`).join('\n')||'Sin material indicado'}
+function renderMailV1(t){const v={cliente:state.clienteNombre||'',direccion:[state.direccion,state.numero,state.portal&&('Portal '+state.portal),state.escalera&&('Esc. '+state.escalera),state.piso&&('Piso '+state.piso),state.letra].filter(Boolean).join(' '),material:materialV1()};return String(t||'').replace(/\{(cliente|direccion|material)\}/g,(_,k)=>v[k])}
+function nativePdfBlobV1(){const p=renderPDFPages();return twoJpegsPdfV1(p[0],p[1])}
+function downloadBlobV1(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1200)}
+function saveHistoryV1(){save();let h=[];try{h=JSON.parse(localStorage.getItem(HK)||'[]')}catch(e){};h.unshift({id:Date.now(),date:new Date().toISOString(),state:JSON.parse(JSON.stringify(state)),st:localStorage.getItem('sigTec'),sc:localStorage.getItem('sigCli')});localStorage.setItem(HK,JSON.stringify(h.slice(0,20)))}
+E('downloadPdfV1').onclick=()=>{try{save();const blob=nativePdfBlobV1();downloadBlobV1(blob,`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`);showSharePointMessage('PDF generado')}catch(e){showSharePointMessage('Error al generar PDF: '+(e.message||e))}};
+E('finishV13').onclick=()=>{try{
+ saveHistoryV1();
+ const c=mailCfgV1(),subject=renderMailV1(c.subject||'Valoración - {cliente}'),body=renderMailV1(c.body||'');
+ const u='https://outlook.office.com/mail/deeplink/compose?to='+encodeURIComponent(c.to||'soporteinstalaciones@verisure.es')+'&cc='+encodeURIComponent(c.cc||'angel.garcia@verisure.es')+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+ localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
+ sessionStorage.setItem('valoracion_enviada_v1','1');
+ window.location.href=u;
+}catch(e){showSharePointMessage('Error al abrir Outlook: '+(e.message||e))}};
+})();
+</script>
 </body></html>
