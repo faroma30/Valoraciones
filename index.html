@@ -459,7 +459,7 @@ label{font-size:12px;font-weight:700;display:block;margin-bottom:4px}input,selec
 <div class="step" data-step="5"><div class="card finalReady"><h2>Valoración lista</h2><p>Revisa el material y el PDF antes de finalizar.</p>
 <div id="materialV13" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin:16px 0"></div><div class="actions" style="position:static;justify-content:center"><button class="primary" id="previewV13">Vista previa</button>
 <button class="primary" id="finishV13">Finalizar y compartir</button>
-<button class="secondary" id="pdfBtn">Generar PDF</button><button class="secondary" id="shareBtn">Compartir PDF</button><button class="secondary" id="newBtn">Nueva valoración</button></div></div><div class="stepNav"><button class="secondary prevStep" data-prev="4">Atrás</button><span></span></div></div>
+</div></div><div class="stepNav"><button class="secondary prevStep" data-prev="4">Atrás</button><span></span></div></div>
 </div>
 <script>
 const memoryStorage=new Map();
@@ -650,9 +650,9 @@ function renderPDFPages(){
 }
 function safeFilePart(value){return String(value||'').trim().replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,'_')}
 async function makePdf(){if(!window.jspdf)throw new Error('No se ha cargado el generador PDF');const {jsPDF}=window.jspdf;const [a,b]=renderPDFPages();const pdf=new jsPDF({orientation:'portrait',unit:'px',format:[1240,1755],hotfixes:['px_scaling']});pdf.addImage(a.toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);pdf.addPage([1240,1755],'portrait');pdf.addImage(b.toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);return pdf}
-el('pdfBtn').onclick=async()=>{try{const p=await makePdf();p.save(`VALORACION_${safeFilePart(state.mantenimiento)||'SIN_NUMERO'}.pdf`)}catch(e){showSharePointMessage(e.message)}};
-el('shareBtn').onclick=async()=>{try{const p=await makePdf();const blob=p.output('blob');const f=new File([blob],`VALORACION_${safeFilePart(state.mantenimiento)||'SIN_NUMERO'}.pdf`,{type:'application/pdf'});if(navigator.canShare?.({files:[f]}))await navigator.share({files:[f],title:'Valoración de instalación'});else{p.save(f.name);showSharePointMessage('Tu dispositivo no permite compartir archivos directamente. Se ha descargado el PDF.')}}catch(e){showSharePointMessage(e.message)}};
-el('newBtn').onclick=()=>{if(confirm('¿Crear una valoración nueva?')){safeStorage.clear();location.reload()}};
+({onclick:null}).onclick=async()=>{try{const p=await makePdf();p.save(`VALORACION_${safeFilePart(state.mantenimiento)||'SIN_NUMERO'}.pdf`)}catch(e){showSharePointMessage(e.message)}};
+({onclick:null}).onclick=async()=>{try{const p=await makePdf();const blob=p.output('blob');const f=new File([blob],`VALORACION_${safeFilePart(state.mantenimiento)||'SIN_NUMERO'}.pdf`,{type:'application/pdf'});if(navigator.canShare?.({files:[f]}))await navigator.share({files:[f],title:'Valoración de instalación'});else{p.save(f.name);showSharePointMessage('Tu dispositivo no permite compartir archivos directamente. Se ha descargado el PDF.')}}catch(e){showSharePointMessage(e.message)}};
+({onclick:null}).onclick=()=>{if(confirm('¿Crear una valoración nueva?')){safeStorage.clear();location.reload()}};
 
 const stepNames=['Datos del cliente','Datos de instalación','Croquis','Zonas / estancias','Firmas','Generar PDF'];
 let currentStep=0;
@@ -769,4 +769,42 @@ fill();E('saveMailV14').onclick=saveCfg;
 E('finishV13').onclick=finishOutlook;
 })();
 </script>
-<script>(()=>{const E=id=>document.getElementById(id),HK='historial_v13';function gh(){try{return JSON.parse(localStorage.getItem(HK)||'[]').slice(0,20)}catch(e){return[]}}function dh(){const b=E('historyTopListV1'),a=gh();b.innerHTML=a.length?'':'<p>No hay valoraciones guardadas.</p>';a.forEach(x=>{let d=document.createElement('div');d.style='padding:12px 0;border-top:1px solid #ddd;display:flex;justify-content:space-between;gap:8px';d.innerHTML=`<div><b>${x.state?.clienteNombre||'Sin nombre'}</b><br><small>${x.state?.direccion||''}<br>${new Date(x.date).toLocaleString('es-ES')}</small></div><div><button class="secondary o">Abrir</button> <button class="danger d">×</button></div>`;d.querySelector('.o').onclick=()=>{localStorage.setItem('valoracion_simple',JSON.stringify(x.state));if(x.st)localStorage.setItem('sigTec',x.st);if(x.sc)localStorage.setItem('sigCli',x.sc);location.reload()};d.querySelector('.d').onclick=()=>{if(confirm('¿Eliminar esta valoración?')){localStorage.setItem(HK,JSON.stringify(gh().filter(y=>y.id!==x.id)));dh()}};b.appendChild(d)})}E('settingsTopV1').onclick=()=>E('settingsModalV1').style.display='block';E('closeSettingsV1').onclick=()=>E('settingsModalV1').style.display='none';E('historyTopV1').onclick=()=>{dh();E('historyModalV1').style.display='block'};E('closeHistoryV1').onclick=()=>E('historyModalV1').style.display='none';E('homeV13').style.display='none'})();</script></body></html>
+<script>(()=>{const E=id=>document.getElementById(id),HK='historial_v13';function gh(){try{return JSON.parse(localStorage.getItem(HK)||'[]').slice(0,20)}catch(e){return[]}}function dh(){const b=E('historyTopListV1'),a=gh();b.innerHTML=a.length?'':'<p>No hay valoraciones guardadas.</p>';a.forEach(x=>{let d=document.createElement('div');d.style='padding:12px 0;border-top:1px solid #ddd;display:flex;justify-content:space-between;gap:8px';d.innerHTML=`<div><b>${x.state?.clienteNombre||'Sin nombre'}</b><br><small>${x.state?.direccion||''}<br>${new Date(x.date).toLocaleString('es-ES')}</small></div><div><button class="secondary o">Abrir</button> <button class="danger d">×</button></div>`;d.querySelector('.o').onclick=()=>{localStorage.setItem('valoracion_simple',JSON.stringify(x.state));if(x.st)localStorage.setItem('sigTec',x.st);if(x.sc)localStorage.setItem('sigCli',x.sc);location.reload()};d.querySelector('.d').onclick=()=>{if(confirm('¿Eliminar esta valoración?')){localStorage.setItem(HK,JSON.stringify(gh().filter(y=>y.id!==x.id)));dh()}};b.appendChild(d)})}E('settingsTopV1').onclick=()=>E('settingsModalV1').style.display='block';E('closeSettingsV1').onclick=()=>E('settingsModalV1').style.display='none';E('historyTopV1').onclick=()=>{dh();E('historyModalV1').style.display='block'};E('closeHistoryV1').onclick=()=>E('historyModalV1').style.display='none';E('homeV13').style.display='none';if(E('saveState'))E('saveState').textContent='Guardado'})();</script>
+<script>
+(()=>{
+const E=id=>document.getElementById(id);
+const HK='historial_v13', MK='correo_final_v14';
+function cfg(){try{return {to:'soporteinstalaciones@verisure.es',cc:'angel.garcia@verisure.es',subject:'Valoración - {cliente}',body:'Buenos días,\n\nAdjunto la valoración correspondiente al prospecto {cliente}.\n\nPropuesta realizada al cliente:\n{material}\n\nDirección: {direccion}\n\nUn saludo.',...JSON.parse(localStorage.getItem(MK)||'{}')}}catch(e){return {to:'soporteinstalaciones@verisure.es',cc:'angel.garcia@verisure.es',subject:'Valoración - {cliente}',body:'Buenos días,\n\nAdjunto la valoración correspondiente al prospecto {cliente}.\n\nPropuesta realizada al cliente:\n{material}\n\nDirección: {direccion}\n\nUn saludo.'}}}
+function materialText(){const c={};state.zones.forEach(z=>(z.elements||[]).forEach(k=>c[k]=(c[k]||0)+1));return Object.entries(c).map(([k,n])=>`${n} x ${(devices.find(x=>x[0]===k)||[k,k])[1]}`).join('\n')||'Sin material indicado'}
+function render(t){const v={cliente:state.clienteNombre||'',direccion:[state.direccion,state.numero,state.portal&&('Portal '+state.portal),state.escalera&&('Esc. '+state.escalera),state.piso&&('Piso '+state.piso),state.letra].filter(Boolean).join(' '),material:materialText()};return String(t||'').replace(/\{(cliente|direccion|material)\}/g,(_,k)=>v[k])}
+function storeHistory(){
+ save();
+ let h=[];try{h=JSON.parse(localStorage.getItem(HK)||'[]')}catch(e){}
+ const it={id:Date.now(),date:new Date().toISOString(),state:JSON.parse(JSON.stringify(state)),st:localStorage.getItem('sigTec'),sc:localStorage.getItem('sigCli')};
+ if(state.mantenimiento)h=h.filter(x=>x.state?.mantenimiento!==state.mantenimiento);
+ h.unshift(it);localStorage.setItem(HK,JSON.stringify(h.slice(0,20)));
+}
+function clearDraft(){
+ localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
+}
+async function finalOutlookV1(){
+ try{
+   save(); storeHistory();
+   const c=cfg(), subject=render(c.subject), body=render(c.body);
+   // Outlook se abre ya preparado. El PDF se descarga para adjuntarlo desde Outlook.
+   const p=await makePdf();
+   const filename=`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`;
+   p.save(filename);
+   const u='https://outlook.office.com/mail/deeplink/compose?to='+encodeURIComponent(c.to)+'&cc='+encodeURIComponent(c.cc)+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+   clearDraft();
+   // Abrir Outlook en pestaña nueva mantiene esta PWA disponible para iniciar la siguiente.
+   const w=window.open(u,'_blank');
+   if(!w) location.href=u;
+   // Reiniciar formulario inmediatamente para la siguiente valoración.
+   setTimeout(()=>location.reload(),350);
+ }catch(e){showSharePointMessage('Error al finalizar: '+(e?.message||e))}
+}
+const f=E('finishV13'); if(f)f.onclick=finalOutlookV1;
+})();
+</script>
+</body></html>
