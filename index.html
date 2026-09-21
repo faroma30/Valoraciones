@@ -771,7 +771,7 @@ async function finishOutlook(){
      try{await navigator.share({files:[f],title:subject})}catch(e){}
    } else p.save(filename);
    const u='https://outlook.office.com/mail/deeplink/compose?to='+encodeURIComponent(c.to)+'&cc='+encodeURIComponent(c.cc)+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
-   sessionStorage.setItem('valoracion_enviada_v1','1');window.location.href=u;
+   window.location.href=u;
  }catch(e){showSharePointMessage(e.message)}
 }
 fill();E('saveMailV14').onclick=saveCfg;
@@ -793,16 +793,28 @@ function store(){save();let h=H();h.unshift({id:Date.now(),date:new Date().toISO
 async function finish(){try{
 store();
 const c=cfg(),subject=R(c.subject||'Valoración - {cliente}'),body=R(c.body||'');
-const p=await makePdf(),blob=p.output('blob');
-const file=new File([blob],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`,{type:'application/pdf'});
-if(navigator.canShare?.({files:[file]})){
-  sessionStorage.setItem('valoracion_enviada_v1','1');
-  await navigator.share({files:[file],title:subject,text:body});
+const pages=renderPDFPages();
+let files=[];
+if(window.jspdf&&window.jspdf.jsPDF){
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF({orientation:'portrait',unit:'px',format:[1240,1755],hotfixes:['px_scaling']});
+  pdf.addImage(pages[0].toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);
+  pdf.addPage([1240,1755],'portrait');
+  pdf.addImage(pages[1].toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);
+  files=[new File([pdf.output('blob')],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`,{type:'application/pdf'})];
+}else{
+  const toBlob=c=>new Promise(r=>c.toBlob(r,'image/jpeg',0.92));
+  files=[
+    new File([await toBlob(pages[0])],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}_1.jpg`,{type:'image/jpeg'}),
+    new File([await toBlob(pages[1])],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}_2.jpg`,{type:'image/jpeg'})
+  ];
+}
+if(navigator.canShare?.({files})){
+  await navigator.share({files,title:subject,text:body});
   localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
   setTimeout(()=>location.reload(),250);
 }else{
-  p.save(file.name);
-  showSharePointMessage('PDF generado. Selecciona Outlook para adjuntarlo.');
+  throw new Error('Este dispositivo no permite compartir el archivo');
 }
 }catch(e){if(e?.name==='AbortError')showSharePointMessage('Compartir cancelado');else showSharePointMessage('Error al finalizar: '+(e.message||e))}}
 if(E('finishV13'))E('finishV13').onclick=finish;
@@ -812,15 +824,5 @@ if(E('settingsTopV1'))E('settingsTopV1').onclick=()=>{E('homeV13').style.display
 if(E('homeV13'))E('homeV13').style.display='none';
 })();
 </script>
-<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:44 · ADJUNTO NATIVO</div>
-
-<script>
-window.addEventListener('pageshow',e=>{
- if(sessionStorage.getItem('valoracion_enviada_v1')==='1'){
-   sessionStorage.removeItem('valoracion_enviada_v1');
-   localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
-   if(typeof showStep==='function')showStep(0);
- }
-});
-</script>
+<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:52 · SHARE FIX</div>
 </body></html>
