@@ -790,17 +790,43 @@ function cfg(){try{return {to:'soporteinstalaciones@verisure.es',cc:'angel.garci
 function mat(){const c={};state.zones.forEach(z=>(z.elements||[]).forEach(k=>c[k]=(c[k]||0)+1));return Object.entries(c).map(([k,n])=>`${n} x ${(devices.find(x=>x[0]===k)||[k,k])[1]}`).join('\n')||'Sin material indicado'}
 function R(t){const v={cliente:state.clienteNombre||'',direccion:[state.direccion,state.numero,state.portal&&('Portal '+state.portal),state.escalera&&('Esc. '+state.escalera),state.piso&&('Piso '+state.piso),state.letra].filter(Boolean).join(' '),material:mat()};return String(t||'').replace(/\{(cliente|direccion|material)\}/g,(_,k)=>v[k])}
 function store(){save();let h=H();h.unshift({id:Date.now(),date:new Date().toISOString(),state:JSON.parse(JSON.stringify(state)),st:localStorage.getItem('sigTec'),sc:localStorage.getItem('sigCli')});localStorage.setItem(HK,JSON.stringify(h.slice(0,20)))}
+
+function dataUrlBytesV1(url){
+ const b=atob(url.split(',')[1]),a=new Uint8Array(b.length);
+ for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);
+ return a;
+}
+function twoJpegsPdfV1(c1,c2){
+ const imgs=[c1.toDataURL('image/jpeg',0.92),c2.toDataURL('image/jpeg',0.92)].map(dataUrlBytesV1);
+ const enc=new TextEncoder(), chunks=[], offsets=[0], pushText=t=>chunks.push(enc.encode(t)), pushBytes=b=>chunks.push(b);
+ let pos=0; const add=t=>{const b=enc.encode(t);chunks.push(b);pos+=b.length}, addB=b=>{chunks.push(b);pos+=b.length};
+ add('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+ const objs=[];
+ function obj(n,head,stream){
+   offsets[n]=pos; add(n+' 0 obj\n');
+   if(stream){add(head.replace('{LEN}',String(stream.length))+'\nstream\n');addB(stream);add('\nendstream\nendobj\n')}
+   else add(head+'\nendobj\n');
+ }
+ obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+ obj(2,'<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>');
+ obj(3,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /XObject << /Im1 5 0 R >> >> /Contents 7 0 R >>');
+ obj(4,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /XObject << /Im2 6 0 R >> >> /Contents 8 0 R >>');
+ obj(5,'<< /Type /XObject /Subtype /Image /Width 1240 /Height 1755 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length {LEN} >>',imgs[0]);
+ obj(6,'<< /Type /XObject /Subtype /Image /Width 1240 /Height 1755 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length {LEN} >>',imgs[1]);
+ const cA=enc.encode('q 595 0 0 842 0 0 cm /Im1 Do Q');
+ const cB=enc.encode('q 595 0 0 842 0 0 cm /Im2 Do Q');
+ obj(7,'<< /Length {LEN} >>',cA); obj(8,'<< /Length {LEN} >>',cB);
+ const xref=pos; add('xref\n0 9\n0000000000 65535 f \n');
+ for(let i=1;i<=8;i++)add(String(offsets[i]).padStart(10,'0')+' 00000 n \n');
+ add('trailer\n<< /Size 9 /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF');
+ return new Blob(chunks,{type:'application/pdf'});
+}
 async function finish(){try{
 store();
 const c=cfg(),subject=R(c.subject||'Valoración - {cliente}'),body=R(c.body||'');
 const pages=renderPDFPages();
-const PDF=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
-if(!PDF)throw new Error('No se puede crear el PDF único');
-const pdf=new PDF({orientation:'portrait',unit:'px',format:[1240,1755],hotfixes:['px_scaling']});
-pdf.addImage(pages[0].toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);
-pdf.addPage([1240,1755],'portrait');
-pdf.addImage(pages[1].toDataURL('image/jpeg',0.92),'JPEG',0,0,1240,1755);
-const file=new File([pdf.output('blob')],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`,{type:'application/pdf'});
+const blob=twoJpegsPdfV1(pages[0],pages[1]);
+const file=new File([blob],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`,{type:'application/pdf'});
 if(!navigator.canShare?.({files:[file]}))throw new Error('El dispositivo no permite compartir el PDF');
 await navigator.share({files:[file],title:subject,text:body});
 localStorage.removeItem('valoracion_simple');localStorage.removeItem('sigTec');localStorage.removeItem('sigCli');
@@ -813,5 +839,5 @@ if(E('settingsTopV1'))E('settingsTopV1').onclick=()=>{E('homeV13').style.display
 if(E('homeV13'))E('homeV13').style.display='none';
 })();
 </script>
-<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:34 · PDF ÚNICO</div>
+<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:40 · PDF NATIVO</div>
 </body></html>
