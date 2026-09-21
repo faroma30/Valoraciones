@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Valoración de instalación - Asistente móvil</title>
-<script src="./jspdf.bundle.js"></script>
+<script src="./jspdf.bundle.js?rev=20260921-1507"></script>
 <style>
 :root{--red:#e30613;--blue:#0047ff;--bg:#f4f6f8;--card:#fff;--line:#d7dce1}
 *{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#222}
@@ -296,7 +296,7 @@ window.addEventListener('load',()=>{load();if(!state.zones.length)addZone();show
 <div style="position:fixed;right:8px;bottom:6px;font:700 11px Arial;color:#777;z-index:99999">V1</div>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.error));
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?rev=20260921-1507',{updateViaCache:'none'}).catch(console.error));
 }
 </script>
 <script>
@@ -391,6 +391,7 @@ async function finalOutlookV1(){
    save(); storeHistory();
    const c=cfg(), subject=render(c.subject), body=render(c.body);
    // Outlook se abre ya preparado. El PDF se descarga para adjuntarlo desde Outlook.
+   await window.ensurePdfV1();
    const p=await makePdf();
    const filename=`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`;
    p.save(filename);
@@ -406,4 +407,19 @@ async function finalOutlookV1(){
 const f=E('finishV13'); if(f)f.onclick=finalOutlookV1;
 })();
 </script>
-</body></html>
+<div id="updateStampV1" style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px/1.2 Arial,sans-serif;color:#777;background:rgba(255,255,255,.82);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 15:07</div></body></html>
+<script>
+window.ensurePdfV1=async function(){
+ if(window.jspdf?.jsPDF)return true;
+ await new Promise((resolve,reject)=>{
+   const old=document.getElementById('jspdfFallbackV1'); if(old)old.remove();
+   const sc=document.createElement('script'); sc.id='jspdfFallbackV1';
+   sc.src='./jspdf.bundle.js?rev=20260921-1507&fallback=1';
+   sc.onload=resolve; sc.onerror=()=>reject(new Error('No se pudo cargar jspdf.bundle.js'));
+   document.head.appendChild(sc);
+ });
+ if(!window.jspdf?.jsPDF)throw new Error('No se ha cargado el generador PDF');
+ return true;
+};
+</script>
+
