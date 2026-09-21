@@ -430,6 +430,52 @@ label{font-size:12px;font-weight:700;display:block;margin-bottom:4px}input,selec
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#e30613">
 <link rel="apple-touch-icon" href="./icon-192.png">
+
+<style id="verisureUiV1">
+:root{--vs-red:#e30613;--vs-red2:#f0182d;--vs-ink:#171d2b;--vs-muted:#7b8495;--vs-line:#e2e6ec;--vs-bg:#f6f7f9}
+html,body{background:var(--vs-bg)!important;color:var(--vs-ink)!important;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
+body{max-width:100%!important}
+header{background:#fff!important;min-height:74px!important;padding:12px 18px!important;box-shadow:0 3px 14px rgba(20,30,50,.08)!important;border:0!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important}
+header h1{font-size:clamp(17px,4vw,25px)!important;line-height:1.1!important;margin:0!important;color:var(--vs-ink)!important}
+header .brand{font-size:1.35em!important;color:var(--vs-red)!important;font-weight:800!important;letter-spacing:-1px!important}
+header #saveState{font-size:12px!important;color:var(--vs-muted)!important}
+#historyTopV1,#settingsTopV1{background:#fff!important;border:1px solid var(--vs-line)!important;color:var(--vs-ink)!important;border-radius:14px!important;box-shadow:0 4px 12px rgba(20,30,50,.06)!important;padding:10px 12px!important;font-weight:700!important}
+#historyTopV1{font-size:0!important}#historyTopV1:before{content:"◷";font-size:20px;display:block}#historyTopV1:after{content:"Historial";font-size:11px;display:block;margin-top:2px}
+#settingsTopV1{font-size:0!important}#settingsTopV1:before{content:"⚙";font-size:20px;display:block}#settingsTopV1:after{content:"Ajustes";font-size:11px;display:block;margin-top:2px}
+.wizardProgress{background:#fff!important;padding:14px 18px 12px!important;border:0!important}
+.progressTrack{height:6px!important;border-radius:99px!important;background:#e3e6eb!important;overflow:hidden!important}
+.progressFill{background:linear-gradient(90deg,var(--vs-red),var(--vs-red2))!important;border-radius:99px!important}
+.progressText{font-weight:800!important;color:var(--vs-ink)!important;margin-top:8px!important}
+.wrap{max-width:980px!important;margin:0 auto!important;padding:16px!important}
+.card{background:#fff!important;border:1px solid var(--vs-line)!important;border-radius:22px!important;box-shadow:0 10px 30px rgba(30,40,60,.06)!important;overflow:hidden!important}
+.card h2{background:linear-gradient(90deg,#f4f5f7,#fff)!important;margin:0!important;padding:20px 22px!important;font-size:24px!important;color:var(--vs-ink)!important;border-bottom:1px solid #eef0f3!important}
+.grid{padding:20px 22px!important;gap:14px!important}
+label{font-weight:750!important;color:var(--vs-ink)!important;margin-bottom:7px!important}
+input,select,textarea{min-height:50px!important;border:1px solid #cfd5de!important;border-radius:14px!important;background:#fff!important;padding:11px 14px!important;font-size:16px!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.02)!important}
+input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--vs-red)!important;box-shadow:0 0 0 3px rgba(227,6,19,.10)!important}
+button{border-radius:14px!important;font-weight:800!important;transition:.15s ease!important}
+button.primary,.primary{background:linear-gradient(135deg,var(--vs-red),var(--vs-red2))!important;color:#fff!important;border:0!important;box-shadow:0 7px 16px rgba(227,6,19,.20)!important}
+button.secondary,.secondary{background:#f1f3f6!important;color:#2476e8!important;border:0!important}
+.stepNav{background:transparent!important;border:0!important;padding:16px 4px!important}
+.stepNav .primary{min-width:150px!important;min-height:52px!important;font-size:17px!important}
+.requiredHint{color:var(--vs-muted)!important;padding:12px 22px 0!important}
+.finalReady{padding:22px!important}.finalReady h2{background:#f1f2f4!important;border:0!important;border-radius:0!important;text-align:center!important;margin-bottom:20px!important}
+.materialItem,#materialV13>div{background:#fff!important;border:1px solid var(--vs-line)!important;border-radius:16px!important;padding:16px!important;box-shadow:0 4px 14px rgba(30,40,60,.04)!important}
+#previewV13,#downloadPdfV1,#finishV13{min-height:54px!important;padding:12px 18px!important}
+#historyModalV1>div,#settingsModalV1>div{border-radius:22px!important;box-shadow:0 20px 60px rgba(20,30,50,.15)!important}
+#updateStampV1,[style*="Actualizado 21/09"]{font-size:9px!important;color:#9aa1ac!important;background:rgba(255,255,255,.75)!important}
+@media(max-width:600px){
+ header{padding:10px 12px!important;align-items:center!important}
+ header h1{max-width:47%!important}
+ #historyTopV1,#settingsTopV1{padding:8px 9px!important}
+ .wrap{padding:10px!important}
+ .card{border-radius:18px!important}
+ .card h2{font-size:21px!important;padding:17px 16px!important}
+ .grid{padding:16px!important;gap:12px!important}
+ input,select,textarea{min-height:48px!important;font-size:16px!important}
+ .stepNav{padding:14px 4px!important}
+}
+</style>
 </head>
 <body><div id="homeV13" style="display:none;position:fixed;inset:0;z-index:99998;background:#f5f6f8;overflow:auto;padding:12px">
 <div style="max-width:760px;margin:auto;background:#fff;border:1px solid #ddd;border-radius:14px;padding:18px">
@@ -440,7 +486,7 @@ label{font-size:12px;font-weight:700;display:block;margin-bottom:4px}input,selec
 <label>CC</label><input id="mailCcV14" type="email">
 <label>Asunto</label><input id="mailSubjectV14">
 <label>Cuerpo del mensaje</label><textarea id="mailBodyV14" rows="7" style="width:100%;box-sizing:border-box"></textarea>
-<small>Puedes usar {cliente}, {direccion} y {material}.</small>
+<small>Puedes usar {instalacion}, {mantenimiento}, {direccion} y {material}.</small>
 <button class="secondary" id="saveMailV14" style="margin-top:8px">Guardar correo</button>
 <h2>Valoraciones recientes</h2><div id="histV13"></div></div></div>
 <div id="previewModalV13" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);overflow:auto;padding:10px">
@@ -749,8 +795,8 @@ const MK='correo_final_v14';
 const defaults={
  to:'soporteinstalaciones@verisure.es',
  cc:'angel.garcia@verisure.es',
- subject:'Valoración - {cliente}',
- body:'Buenos días,\n\nAdjunto la valoración correspondiente al prospecto {cliente}.\n\nPropuesta realizada al cliente:\n{material}\n\nDirección: {direccion}\n\nUn saludo.'
+ subject:'Valoración - {instalacion} / {mantenimiento}',
+ body:'Buenos días,\n\nAdjunto la valoración correspondiente a la instalación {instalacion} y mantenimiento {mantenimiento}.\n\nPropuesta realizada al cliente:\n{material}\n\nDirección: {direccion}\n\nUn saludo.'
 };
 const E=id=>document.getElementById(id);
 function cfg(){try{return {...defaults,...JSON.parse(localStorage.getItem(MK)||'{}')}}catch(e){return {...defaults}}}
@@ -787,7 +833,7 @@ E('finishV13').onclick=finishOutlook;
 const E=id=>document.getElementById(id),HK='historial_v13',MK='correo_final_v14';
 function H(){try{return JSON.parse(localStorage.getItem(HK)||'[]').slice(0,20)}catch(e){return[]}}
 function drawH(){const b=E('historyListTopV1'),h=H();b.innerHTML=h.length?'':'<p>No hay valoraciones guardadas.</p>';h.forEach(x=>{let d=document.createElement('div');d.style='padding:12px 0;border-top:1px solid #ddd;display:flex;justify-content:space-between;gap:8px';d.innerHTML=`<div><b>${x.state?.clienteNombre||'Sin nombre'}</b><br><small>${x.state?.direccion||''}<br>${new Date(x.date).toLocaleString('es-ES')}</small></div><div><button class="secondary o">Abrir</button> <button class="danger d">×</button></div>`;d.querySelector('.o').onclick=()=>{localStorage.setItem('valoracion_simple',JSON.stringify(x.state));if(x.st)localStorage.setItem('sigTec',x.st);if(x.sc)localStorage.setItem('sigCli',x.sc);location.reload()};d.querySelector('.d').onclick=()=>{if(confirm('¿Eliminar esta valoración?')){localStorage.setItem(HK,JSON.stringify(H().filter(y=>y.id!==x.id)));drawH()}};b.appendChild(d)})}
-function cfg(){try{return {to:'soporteinstalaciones@verisure.es',cc:'angel.garcia@verisure.es',subject:'Valoración - {cliente}',body:'Buenos días,\n\nAdjunto la valoración correspondiente al prospecto {cliente}.\n\nPropuesta realizada al cliente:\n{material}\n\nDirección: {direccion}\n\nUn saludo.',...JSON.parse(localStorage.getItem(MK)||'{}')}}catch(e){return {}}}
+function cfg(){try{return {to:'soporteinstalaciones@verisure.es',cc:'angel.garcia@verisure.es',subject:'Valoración - {instalacion} / {mantenimiento}',body:'Buenos días,\n\nAdjunto la valoración correspondiente a la instalación {instalacion} y mantenimiento {mantenimiento}.\n\nPropuesta realizada al cliente:\n{material}\n\nDirección: {direccion}\n\nUn saludo.',...JSON.parse(localStorage.getItem(MK)||'{}')}}catch(e){return {}}}
 function mat(){const c={};state.zones.forEach(z=>(z.elements||[]).forEach(k=>c[k]=(c[k]||0)+1));return Object.entries(c).map(([k,n])=>`${n} x ${(devices.find(x=>x[0]===k)||[k,k])[1]}`).join('\n')||'Sin material indicado'}
 function R(t){const v={cliente:state.clienteNombre||'',direccion:[state.direccion,state.numero,state.portal&&('Portal '+state.portal),state.escalera&&('Esc. '+state.escalera),state.piso&&('Piso '+state.piso),state.letra].filter(Boolean).join(' '),material:mat()};return String(t||'').replace(/\{(cliente|direccion|material)\}/g,(_,k)=>v[k])}
 function store(){save();let h=H();h.unshift({id:Date.now(),date:new Date().toISOString(),state:JSON.parse(JSON.stringify(state)),st:localStorage.getItem('sigTec'),sc:localStorage.getItem('sigCli')});localStorage.setItem(HK,JSON.stringify(h.slice(0,20)))}
@@ -824,7 +870,7 @@ function twoJpegsPdfV1(c1,c2){
 }
 async function finish(){try{
 store();
-const c=cfg(),subject=R(c.subject||'Valoración - {cliente}'),body=R(c.body||'');
+const c=cfg(),subject=R(c.subject||'Valoración - {instalacion} / {mantenimiento}'),body=R(c.body||'');
 const pages=renderPDFPages();
 const blob=twoJpegsPdfV1(pages[0],pages[1]);
 const file=new File([blob],`VALORACION_${safeFilePart(state.clienteNombre)||'PROSPECTO'}.pdf`,{type:'application/pdf'});
@@ -840,14 +886,14 @@ if(E('settingsTopV1'))E('settingsTopV1').onclick=()=>{E('homeV13').style.display
 if(E('homeV13'))E('homeV13').style.display='none';
 })();
 </script>
-<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 16:08 · MAILTO</div>
+<div style="position:fixed;right:10px;bottom:4px;z-index:20;font:10px Arial;color:#777;background:rgba(255,255,255,.85);padding:2px 4px;border-radius:4px">V1 · Actualizado 21/09 · 16:22 · INST + MANT</div>
 
 <script>
 (()=>{
 const E=id=>document.getElementById(id), MK='correo_final_v14', HK='historial_v13';
-function mailCfgV1(){try{return {to:'soporteinstalaciones@verisure.es',cc:'angel.garcia@verisure.es',subject:'Valoración - {cliente}',body:'Buenos días,\n\nAdjunto la valoración correspondiente al prospecto {cliente}.\n\nPropuesta realizada al cliente:\n{material}\n\nDirección: {direccion}\n\nUn saludo.',...JSON.parse(localStorage.getItem(MK)||'{}')}}catch(e){return {}}}
+function mailCfgV1(){try{return {to:'soporteinstalaciones@verisure.es',cc:'angel.garcia@verisure.es',subject:'Valoración - {instalacion} / {mantenimiento}',body:'Buenos días,\n\nAdjunto la valoración correspondiente a la instalación {instalacion} y mantenimiento {mantenimiento}.\n\nPropuesta realizada al cliente:\n{material}\n\nDirección: {direccion}\n\nUn saludo.',...JSON.parse(localStorage.getItem(MK)||'{}')}}catch(e){return {}}}
 function materialV1(){const c={};state.zones.forEach(z=>(z.elements||[]).forEach(k=>c[k]=(c[k]||0)+1));return Object.entries(c).map(([k,n])=>`${n} x ${(devices.find(x=>x[0]===k)||[k,k])[1]}`).join('\n')||'Sin material indicado'}
-function renderMailV1(t){const v={cliente:state.clienteNombre||'',direccion:[state.direccion,state.numero,state.portal&&('Portal '+state.portal),state.escalera&&('Esc. '+state.escalera),state.piso&&('Piso '+state.piso),state.letra].filter(Boolean).join(' '),material:materialV1()};return String(t||'').replace(/\{(cliente|direccion|material)\}/g,(_,k)=>v[k])}
+function renderMailV1(t){const v={instalacion:state.instalacion||'',mantenimiento:state.mantenimiento||'',direccion:[state.direccion,state.numero,state.portal&&('Portal '+state.portal),state.escalera&&('Esc. '+state.escalera),state.piso&&('Piso '+state.piso),state.letra].filter(Boolean).join(' '),material:materialV1()};return String(t||'').replace(/\{(instalacion|mantenimiento|direccion|material)\}/g,(_,k)=>v[k])}
 
 function dataUrlBytesV1(url){
  const b=atob(url.split(',')[1]),a=new Uint8Array(b.length);
@@ -885,7 +931,7 @@ E('downloadPdfV1').onclick=()=>{try{save();const blob=nativePdfBlobV1();download
 E('finishV13').onclick=()=>{try{
  saveHistoryV1();
  const c=mailCfgV1();
- const subject=renderMailV1(c.subject||'Valoración - {cliente}');
+ const subject=renderMailV1(c.subject||'Valoración - {instalacion} / {mantenimiento}');
  const body=renderMailV1(c.body||'');
  const to=c.to||'soporteinstalaciones@verisure.es';
  const cc=c.cc||'angel.garcia@verisure.es';
